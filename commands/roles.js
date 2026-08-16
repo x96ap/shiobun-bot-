@@ -13,20 +13,30 @@ module.exports = {
 
     async execute(interaction) {
 
-        // Get all roles that Sorimi is allowed to manage.
-        // @everyone and roles above/beside Sorimi are excluded.
+        const botMember = interaction.guild.members.me;
+
+        // Find roles that Sorimi can actually manage.
         const roles = interaction.guild.roles.cache
-            .filter(role =>
-                role.id !== interaction.guild.id &&
-                role.editable &&
-                !role.managed
-            )
+            .filter(role => {
+                // Never include @everyone.
+                if (role.id === interaction.guild.id) return false;
+
+                // Never include Discord-managed roles.
+                if (role.managed) return false;
+
+                // Sorimi must be higher than the role.
+                return botMember.roles.highest.position > role.position;
+            })
             .sort((a, b) => b.position - a.position);
 
-        // Discord dropdowns can contain a maximum of 25 options.
+        console.log(
+            "🌸 manageable roles:",
+            roles.map(role => `${role.name} (${role.position})`).join(", ") || "NONE"
+        );
+
         const roleList = roles.first(25);
 
-        if (!roleList.length) {
+        if (!roleList || roleList.length === 0) {
             return interaction.reply({
                 content:
                     "i couldn't find any roles that i can manage! make sure sorimi's role is above the roles you want her to give.",
@@ -34,7 +44,6 @@ module.exports = {
             });
         }
 
-        // Cute role garden embed.
         const embed = new EmbedBuilder()
             .setTitle("role garden")
             .setDescription(
@@ -47,7 +56,6 @@ module.exports = {
                 text: "sorimi's role garden"
             });
 
-        // Create the dropdown.
         const menu = new StringSelectMenuBuilder()
             .setCustomId("role-garden")
             .setPlaceholder("choose a role...")
@@ -58,7 +66,7 @@ module.exports = {
                     new StringSelectMenuOptionBuilder()
                         .setLabel(role.name.slice(0, 100))
                         .setValue(role.id)
-                        .setDescription(`get the ${role.name} role`)
+                        .setDescription(`get the ${role.name}`.slice(0, 100))
                 )
             );
 
