@@ -22,8 +22,23 @@ const client = new Client({
 
 commandHandler(client);
 
-client.once("ready", () => {
+client.once("ready", async () => {
   console.log(`🌸 logged in as ${client.user.tag}!`);
+
+  try {
+    const commands = Array.from(client.commands.values()).map(
+      command => command.data.toJSON()
+    );
+
+    await client.application.commands.set(
+      commands,
+      process.env.GUILD_ID
+    );
+
+    console.log(`🌸 registered ${commands.length} command(s)!`);
+  } catch (error) {
+    console.error("❌ failed to register commands:", error);
+  }
 });
 
 client.login(process.env.TOKEN);
