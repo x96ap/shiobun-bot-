@@ -1,6 +1,8 @@
 const express = require("express");
 const { Client, GatewayIntentBits } = require("discord.js");
 
+const commandHandler = require("./handlers/commandHandler");
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
