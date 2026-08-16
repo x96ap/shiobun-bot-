@@ -20,6 +20,8 @@ const client = new Client({
   intents: [GatewayIntentBits.Guilds]
 });
 
+commandHandler(client);
+
 client.once("ready", () => {
   console.log(`🌸 logged in as ${client.user.tag}!`);
 });
