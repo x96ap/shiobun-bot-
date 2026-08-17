@@ -39,7 +39,7 @@ module.exports = {
         if (!roleList || roleList.length === 0) {
             return interaction.reply({
                 content:
-                    "i couldn't find any roles that i can manage! make sure sorimi's role is above the roles you want her to give.",
+                    "i couldn't find any roles that i can manage! make sure sorimi's role is above the roles you want to assign <3",
                 ephemeral: true
             });
         }
